@@ -28,7 +28,7 @@ public class sfcRunState implements sfcState {
 		int i = 0;
 		System.out.println("start running demand logical");
 		for (i = 0; i < 10; i++) {
-
+			System.out.println("start running demand logical+i");
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {

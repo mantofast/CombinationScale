@@ -1,6 +1,7 @@
 package test;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Sfc implements Runnable {
 	public int type;
@@ -11,15 +12,17 @@ public class Sfc implements Runnable {
 	public ArrayList<Vnf> VnfList;
 	public int cost;
 	public int ResponseTime;
+	public ReentrantLock lock;
 
 	public Sfc(ArrayList<Vnf> VnfList, int type, int cost) {
 		this.VnfList = VnfList;
 		this.initState = new sfcInitState(this);
-		this.runState = new sfcInitState(this);
-		this.leftState = new sfcInitState(this);
+		this.runState = new sfcRunState(this);
+		this.leftState = new sfcLeftState(this);
 		this.State = this.initState;
 		this.type = type;
 		this.cost = cost;
+		this.lock = new ReentrantLock();
 	}
 
 	@Override
@@ -31,9 +34,10 @@ public class Sfc implements Runnable {
 
 			// n++;
 			// System.out.println("sfc info: " + this.type);
+			System.out.println(this.State == this.initState);
 			this.State.run();
 			try {
-				Thread.sleep(5);// 每隔一段时间check一下状态
+				Thread.sleep(15);// 每隔一段时间check一下状态
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

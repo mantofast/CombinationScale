@@ -1,5 +1,7 @@
 package test;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class sfcInitState implements sfcState {
 
 	public Sfc sfc;
@@ -23,8 +25,17 @@ public class sfcInitState implements sfcState {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		for (Vnf f : this.sfc.VnfList)
-			f.SfcWaitList.add(this.sfc);
+		ReentrantLock lock = this.sfc.lock;
+		lock.lock();
+		for (Vnf f : this.sfc.VnfList) {
+			if (!f.SfcWaitList.contains(this.sfc)
+					&& !f.SfcList.contains(this.sfc)) {
+				f.SfcWaitList.add(this.sfc);
+				System.out.println("add sfc into sfcWaitList");
+			} else
+				System.out.println("this sfc is already in the list");
+		}
+		lock.unlock();
 		// this.sfc.setState(this.sfc.runState);
 	}
 
