@@ -27,10 +27,10 @@ public class sfcRunState implements sfcState {
 		// do something
 		int i = 0;
 		System.out.println("start running demand logical");
-		for (i = 0; i < 1000; i++) {
+		for (i = 0; i < 10; i++) {
 
 			try {
-				Thread.sleep(1);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

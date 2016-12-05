@@ -1,6 +1,6 @@
 package test;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Vnf implements Runnable {
 	public int type;
@@ -9,8 +9,8 @@ public class Vnf implements Runnable {
 	public vnfState upState;
 	public vnfState downState;
 
-	public ArrayList<Sfc> SfcList;
-	public ArrayList<Sfc> SfcWaitList;
+	public CopyOnWriteArrayList<Sfc> SfcList;
+	public CopyOnWriteArrayList<Sfc> SfcWaitList;
 	// public int num;
 	public int totalCpu;
 	public int cosumption;
@@ -29,6 +29,10 @@ public class Vnf implements Runnable {
 		this.upState = new vnfScaleUpState(this);
 		this.downState = new vnfScaleDownState(this);
 		this.state = norState;
+		// this.SfcList = new ArrayList<Sfc>();
+		// this.SfcWaitList = new ArrayList<Sfc>();
+		this.SfcList = new CopyOnWriteArrayList<Sfc>();
+		this.SfcWaitList = new CopyOnWriteArrayList<Sfc>();
 
 	}
 
@@ -36,14 +40,14 @@ public class Vnf implements Runnable {
 		if (sfc.cost <= MaxCpu - cosumption) {
 			if (sfc.cost <= totalCpu - cosumption) {
 				if (this.SfcList == null)
-					this.SfcList = new ArrayList<Sfc>();
+					this.SfcList = new CopyOnWriteArrayList<Sfc>();
 
 				this.SfcList.add(sfc);
 				sfc.State.run();
 				return 1;
 			} else {
 				if (this.SfcWaitList == null)
-					this.SfcWaitList = new ArrayList<Sfc>();
+					this.SfcWaitList = new CopyOnWriteArrayList<Sfc>();
 				this.SfcWaitList.add(sfc);
 				return 1;
 			}
@@ -65,6 +69,7 @@ public class Vnf implements Runnable {
 			if (this.state == this.norState) {
 				// step1:遍历vnfllist，看有没有sfc是处于left状态的，释放资源
 				// System.out.println("vnf info: " + this.type + " n: " + n);
+
 				for (Sfc s : this.SfcList) {
 					if (s.State == s.leftState)
 						this.cosumption -= s.cost;
@@ -76,8 +81,7 @@ public class Vnf implements Runnable {
 						this.cosumption += s.cost;
 						this.SfcList.add(s);
 						this.SfcWaitList.remove(s);
-						Thread SfcThread = new Thread(s);
-						SfcThread.start();
+						s.setState(s.runState);
 
 					}
 

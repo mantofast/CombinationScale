@@ -25,7 +25,7 @@ public class sfcInitState implements sfcState {
 		// TODO Auto-generated method stub
 		for (Vnf f : this.sfc.VnfList)
 			f.SfcWaitList.add(this.sfc);
-		this.sfc.setState(this.sfc.runState);
+		// this.sfc.setState(this.sfc.runState);
 	}
 
 }

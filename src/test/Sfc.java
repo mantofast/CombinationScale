@@ -30,7 +30,7 @@ public class Sfc implements Runnable {
 		while (this.State != this.leftState) {
 
 			// n++;
-			System.out.println("sfc info: " + this.type);
+			// System.out.println("sfc info: " + this.type);
 			this.State.run();
 			try {
 				Thread.sleep(5);// 每隔一段时间check一下状态
