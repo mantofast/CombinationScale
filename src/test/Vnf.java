@@ -21,7 +21,7 @@ public class Vnf implements Runnable {
 	public int scaleUpPeriod;
 	public int scaleDownInterval;
 	public int scaleDownPeriod;
-	public int MaxCpu;
+	public int MaxCpu = 150;
 	public int MinCpu;
 	private ReentrantLock lock;
 
@@ -100,6 +100,7 @@ public class Vnf implements Runnable {
 				lock.unlock();
 
 				// step3: 判断是否需要联动扩容
+				lock.lock();
 				if (flagL >= 3) {
 					this.state.scaleUp(Math.max(flagL * 3, 10));
 					flagL = 0;
@@ -110,14 +111,15 @@ public class Vnf implements Runnable {
 								flagL++;
 						}
 					}
-
+				lock.unlock();
 				// step4:判断是否需要普通扩容
+				lock.lock();
 				if (flagP >= 2) {
 					this.state.scaleUp(10);
 					flagP = 0;
 				} else if (this.cosumption >= this.totalCpu * 0.75)
 					flagP++;
-
+				lock.unlock();
 				try {
 					// 每隔一段时间check状态
 					Thread.sleep(10);
