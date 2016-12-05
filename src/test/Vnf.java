@@ -77,7 +77,7 @@ public class Vnf implements Runnable {
 				for (Sfc s : this.SfcList) {
 					if (s.State == s.leftState) {
 						this.cosumption -= s.cost;
-						System.out.println("delete sfc from sfclist");
+						System.out.println("delete sfc from sfclist" + s.type);
 						this.SfcList.remove(s);
 					}
 				}
@@ -89,9 +89,10 @@ public class Vnf implements Runnable {
 						this.cosumption += s.cost;
 						this.SfcList.add(s);
 						this.SfcWaitList.remove(s);
-						s.setState(s.runState);
-						System.out.println("change state sfc:"
-								+ (s.State == s.runState));
+						System.out.println("vnf" + this.type + ": sfc" + s.type
+								+ "access success");
+						// s.setState(s.runState);
+						// System.out.println("change state sfc:" + s.type);
 
 					}
 

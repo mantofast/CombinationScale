@@ -27,16 +27,22 @@ public class sfcInitState implements sfcState {
 		// TODO Auto-generated method stub
 		ReentrantLock lock = this.sfc.lock;
 		lock.lock();
+		int flag = 0;
 		for (Vnf f : this.sfc.VnfList) {
 			if (!f.SfcWaitList.contains(this.sfc)
 					&& !f.SfcList.contains(this.sfc)) {
 				f.SfcWaitList.add(this.sfc);
-				System.out.println("add sfc into sfcWaitList");
+				System.out.println("add sfc" + this.sfc.type + " into VNF"
+						+ f.type);
+				flag = 1;
 			} else
-				System.out.println("this sfc is already in the list");
+				System.out.println("sfc" + this.sfc.type
+						+ " is already in the VNF" + f.type);
 		}
+		if (flag == 0)
+			this.sfc.setState(this.sfc.runState);
 		lock.unlock();
-		// this.sfc.setState(this.sfc.runState);
+
 	}
 
 }

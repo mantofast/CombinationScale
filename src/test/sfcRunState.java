@@ -26,9 +26,9 @@ public class sfcRunState implements sfcState {
 		// TODO Auto-generated method stub
 		// do something
 		int i = 0;
-		System.out.println("start running demand logical");
-		for (i = 0; i < 10; i++) {
-			System.out.println("start running demand logical+i");
+		// System.out.println("start running demand logical");
+		for (i = 0; i < 2; i++) {
+			System.out.println("start running demand logical" + this.sfc.type);
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
