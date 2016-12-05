@@ -29,15 +29,17 @@ public class sfcInitState implements sfcState {
 		lock.lock();
 		int flag = 0;
 		for (Vnf f : this.sfc.VnfList) {
-			if (!f.SfcWaitList.contains(this.sfc)
-					&& !f.SfcList.contains(this.sfc)) {
-				f.SfcWaitList.add(this.sfc);
-				System.out.println("add sfc" + this.sfc.type + " into VNF"
-						+ f.type);
-				flag = 1;
+			if (!f.SfcList.contains(this.sfc)) {
+				if (!f.SfcWaitList.contains(this.sfc)) {
+					f.SfcWaitList.add(this.sfc);
+					System.out.println("add sfc" + this.sfc.type + " into VNF"
+							+ f.type);
+
+				} else
+					System.out.println("sfc" + this.sfc.type
+							+ " is already in the VNF" + f.type);
 			} else
-				System.out.println("sfc" + this.sfc.type
-						+ " is already in the VNF" + f.type);
+				flag = 1;
 		}
 		if (flag == 0)
 			this.sfc.setState(this.sfc.runState);

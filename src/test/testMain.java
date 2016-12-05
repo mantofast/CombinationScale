@@ -36,7 +36,7 @@ public class testMain {
 		vnflist2.add(vnf4);
 		vnflist2.add(vnf2);
 		vnflist2.add(vnf5);
-		Sfc sfc2 = new Sfc(vnflist2, 2, 40);
+		Sfc sfc2 = new Sfc(vnflist2, 2, 30);
 
 		Thread sfcT1 = new Thread(sfc1);
 		sfcT1.start();
