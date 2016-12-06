@@ -77,7 +77,8 @@ public class Vnf implements Runnable {
 				for (Sfc s : this.SfcList) {
 					if (s.State == s.leftState) {
 						this.cosumption -= s.cost;
-						System.out.println("delete sfc from sfclist" + s.type);
+						System.out.println("delete sfc" + s.type + "from vnf"
+								+ this.type);
 						this.SfcList.remove(s);
 					}
 				}
@@ -90,7 +91,7 @@ public class Vnf implements Runnable {
 						this.SfcList.add(s);
 						this.SfcWaitList.remove(s);
 						System.out.println("vnf" + this.type + ": sfc" + s.type
-								+ "access success");
+								+ " access success");
 						// s.setState(s.runState);
 						// System.out.println("change state sfc:" + s.type);
 
@@ -102,7 +103,7 @@ public class Vnf implements Runnable {
 				// step3: 判断是否需要联动扩容
 				lock.lock();
 				if (flagL >= 3) {
-					this.state.scaleUp(Math.max(flagL * 3, 10));
+					this.state.scaleUp(Math.min(flagL * 3, 10));
 					flagL = 0;
 				} else
 					for (Sfc s : this.SfcList) {

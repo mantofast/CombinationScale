@@ -30,6 +30,7 @@ public class sfcInitState implements sfcState {
 		int flag = 0;
 		for (Vnf f : this.sfc.VnfList) {
 			if (!f.SfcList.contains(this.sfc)) {
+				flag = 1;
 				if (!f.SfcWaitList.contains(this.sfc)) {
 					f.SfcWaitList.add(this.sfc);
 					System.out.println("add sfc" + this.sfc.type + " into VNF"
@@ -39,7 +40,7 @@ public class sfcInitState implements sfcState {
 					System.out.println("sfc" + this.sfc.type
 							+ " is already in the VNF" + f.type);
 			} else
-				flag = 1;
+				System.out.println("haha");
 		}
 		if (flag == 0)
 			this.sfc.setState(this.sfc.runState);
