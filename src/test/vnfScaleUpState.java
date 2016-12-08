@@ -11,9 +11,10 @@ public class vnfScaleUpState implements vnfState {
 	@Override
 	public int scaleUp(int amount) {
 		// TODO Auto-generated method stub
-		System.out.println("vnf" + this.vnf.type
-				+ " is already in the scaling up process");
-		return -1;
+		System.out.println("try to scale up");
+		run(amount);
+		// System.out.println("scale up end");
+		return 1;
 	}
 
 	@Override
