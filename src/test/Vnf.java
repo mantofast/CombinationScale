@@ -115,9 +115,19 @@ public class Vnf implements Runnable {
 			}
 			// lock.unlock();
 
-			// step3: 判断是否需要联动扩容
+			// step3:判断是否需要普通扩容
 			// lock.lock();
+			// if (flagP >= 2) {
+			// System.out.println("vnf" + this.type + " normal scale up");
+			// this.state.scaleUp(10);
+			// flagP = 0;
+			// } else if (this.cosumption >= this.totalCpu * 0.75)
+			// flagP++;
+			//
+			// // step4: 判断是否需要联动扩容
+			//
 			// if (flagL >= 3) {
+			// System.out.println("vnf" + this.type + " combina scale up");
 			// this.state.scaleUp(Math.min(flagL * 3, 10));
 			// flagL = 0;
 			// } else
@@ -127,23 +137,36 @@ public class Vnf implements Runnable {
 			// flagL++;
 			// }
 			// }
-			// lock.unlock();
-			// step4:判断是否需要普通扩容
-			// lock.lock();
-			if (flagP >= 1) {
-				this.state.scaleUp(10);
-				flagP = 0;
-			} else if (this.cosumption >= this.totalCpu * 0.75)
-				flagP++;
-			// lock.unlock();
-			// try {
-			// // 每隔一段时间check状态
-			// Thread.sleep(10);
-			//
-			// } catch (InterruptedException e) {
-			// // TODO Auto-generated catch blockrun()
-			// e.printStackTrace();
-			// }
+			// STEP3:判断是否需要扩容，以及扩容的逻辑：
+			if (this.cosumption >= this.totalCpu * 0.8)// H_L thredhold
+			{
+				if (flagP >= 2) {
+					System.out.println("vnf" + this.type + " normal scale up");
+					this.state.scaleUp(10);
+					flagP = 0;
+				} else
+					flagP++;
+			} else if (this.cosumption >= this.totalCpu * 0.6) {
+				if (flagL != 0) {
+					System.out.println("vnf" + this.type + " combina scale up");
+					this.state.scaleUp(Math.min(flagL * 2, 7));
+					flagL = 0;
+				} else
+					for (Sfc s : this.SfcList) {
+						int flag = 0;
+						for (Vnf f : s.VnfList) {
+							if (f.type != this.type
+									&& f.cosumption >= f.totalCpu * 0.6)
+								flag = 1;
+						}
+						if (flag == 1)
+							flagL++;
+					}
+
+			} else {
+				// do nothing
+				System.out.print("");
+			}
 
 			con.signalAll();
 			lock.unlock();

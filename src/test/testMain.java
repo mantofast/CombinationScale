@@ -30,13 +30,13 @@ public class testMain {
 		vnflist1.add(vnf1);
 		vnflist1.add(vnf2);
 		vnflist1.add(vnf3);
-		Sfc sfc1 = new Sfc(vnflist1, 1, 10);
+		Sfc sfc1 = new Sfc(vnflist1, 1, 60);
 
 		ArrayList<Vnf> vnflist2 = new ArrayList<Vnf>();
 		vnflist2.add(vnf4);
 		vnflist2.add(vnf2);
 		vnflist2.add(vnf5);
-		Sfc sfc2 = new Sfc(vnflist2, 2, 100);
+		Sfc sfc2 = new Sfc(vnflist2, 2, 60);
 
 		Thread sfcT1 = new Thread(sfc1);
 		sfcT1.start();
