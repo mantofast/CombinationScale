@@ -27,14 +27,17 @@ public class vnfScaleUpState implements vnfState {
 	public int run(int amount) {
 		if (this.vnf.totalCpu + amount <= this.vnf.MaxCpu) {
 
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// try {
+			// Thread.sleep(100);
+			// } catch (InterruptedException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
+			for (int i = 0; i < 100; i++)
+				;
 			this.vnf.totalCpu += amount;
 			this.vnf.setState(this.vnf.norState);
+			System.out.println("vnf" + this.vnf.type + "scale up success");
 			return 1;
 
 		} else {
