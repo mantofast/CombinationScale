@@ -1,6 +1,8 @@
 package test;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Queue;
 
 public class Sfc implements Runnable {
 	public int type;
@@ -9,13 +11,15 @@ public class Sfc implements Runnable {
 	public sfcState leftState;
 	public sfcState State;
 	public ArrayList<Vnf> VnfList;
+	public Queue<Vnf> VnfQueue;
 	public int cost;
 	public int ResponseTime;
 
 	// public ReentrantLock lock;
 
-	public Sfc(ArrayList<Vnf> VnfList, int type, int cost) {
+	public Sfc(Queue<Vnf> VnfQueue, ArrayList<Vnf> VnfList, int type, int cost) {
 		this.VnfList = VnfList;
+		this.VnfQueue = VnfQueue;
 		this.initState = new sfcInitState(this);
 		this.runState = new sfcRunState(this);
 		this.leftState = new sfcLeftState(this);
@@ -43,6 +47,7 @@ public class Sfc implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		System.out.println(new Date(System.currentTimeMillis()));
 		System.out.println("sfc" + this.type + " end");
 	}
 

@@ -1,5 +1,7 @@
 package test;
 
+import java.util.Date;
+
 public class sfcRunState implements sfcState {
 
 	public Sfc sfc;
@@ -26,11 +28,12 @@ public class sfcRunState implements sfcState {
 		// TODO Auto-generated method stub
 		// do something
 		int i = 0;
-		// System.out.println("start running demand logical");
+		System.out.println("start running demand logical" + this.sfc.type);
+		System.out.println(new Date(System.currentTimeMillis()));
 		for (i = 0; i < 2; i++) {
-			System.out.println("start running demand logical" + this.sfc.type);
+			System.out.println("running demand logical" + this.sfc.type);
 			try {
-				Thread.sleep(10);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

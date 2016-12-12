@@ -25,7 +25,8 @@ public class sfcInitState implements sfcState {
 		// TODO Auto-generated method stub
 
 		int flag = 0;
-		for (Vnf f : this.sfc.VnfList) {
+		while (!this.sfc.VnfQueue.isEmpty()) {
+			Vnf f = this.sfc.VnfQueue.element();
 			f.lock.lock();
 			if (!f.SfcList.contains(this.sfc)) {
 				flag = 1;
@@ -34,11 +35,11 @@ public class sfcInitState implements sfcState {
 					System.out.println("add sfc" + this.sfc.type + " into VNF"
 							+ f.type);
 
-				} else
-					System.out.println("sfc" + this.sfc.type
-							+ " is already in the VNF" + f.type);
+				} // else
+				// System.out.println("sfc" + this.sfc.type
+				// + " is already in the VNF" + f.type);
 			} else
-				System.out.print("");
+				this.sfc.VnfQueue.remove();
 			f.lock.unlock();
 		}
 		if (flag == 0)

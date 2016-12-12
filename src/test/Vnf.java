@@ -116,12 +116,12 @@ public class Vnf implements Runnable {
 			// lock.unlock();
 
 			// step3:判断是否需要普通扩容
-			// lock.lock();
+
 			// if (flagP >= 2) {
 			// System.out.println("vnf" + this.type + " normal scale up");
 			// this.state.scaleUp(10);
 			// flagP = 0;
-			// } else if (this.cosumption >= this.totalCpu * 0.75)
+			// } else if (this.cosumption >= this.totalCpu * 0.8)
 			// flagP++;
 			//
 			// // step4: 判断是否需要联动扩容
@@ -181,6 +181,5 @@ public class Vnf implements Runnable {
 		}
 
 	}
-
 	// }
 }
