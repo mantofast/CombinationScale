@@ -156,7 +156,7 @@ public class Vnf implements Runnable {
 						int flag = 0;
 						for (Vnf f : s.VnfList) {
 							if (f.type != this.type
-									&& f.cosumption >= f.totalCpu * 0.6)
+									&& f.cosumption >= f.totalCpu * 0.8)
 								flag = 1;
 						}
 						if (flag == 1)

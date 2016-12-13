@@ -1,7 +1,10 @@
 package test;
 
+import java.util.Date;
+
 public class vnfScaleUpState implements vnfState {
 	public Vnf vnf;
+	public Date lastScaUpTime;
 
 	public vnfScaleUpState(Vnf vnf) {
 		this.vnf = vnf;
@@ -26,6 +29,13 @@ public class vnfScaleUpState implements vnfState {
 	}
 
 	public int run(int amount) {
+		if (this.lastScaUpTime != null
+				&& (new Date(System.currentTimeMillis())).getSeconds()
+						- this.lastScaUpTime.getSeconds() < 1) {
+			System.out.println("too soon after last scale up");
+			return -1;
+		}
+		this.lastScaUpTime = new Date(System.currentTimeMillis());
 		if (this.vnf.totalCpu + amount <= this.vnf.MaxCpu) {
 
 			// try {

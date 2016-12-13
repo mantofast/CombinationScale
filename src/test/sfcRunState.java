@@ -33,7 +33,25 @@ public class sfcRunState implements sfcState {
 		for (i = 0; i < 2; i++) {
 			System.out.println("running demand logical" + this.sfc.type);
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(this.sfc.runTime);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		this.sfc.setState(this.sfc.leftState);
+	}
+
+	public void run(int time) {
+		// TODO Auto-generated method stub
+		// do something
+		int i = 0;
+		System.out.println("start running demand logical" + this.sfc.type);
+		System.out.println(new Date(System.currentTimeMillis()));
+		for (i = 0; i < 2; i++) {
+			System.out.println("running demand logical" + this.sfc.type);
+			try {
+				Thread.sleep(time);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

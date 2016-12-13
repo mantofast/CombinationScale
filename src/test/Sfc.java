@@ -14,10 +14,12 @@ public class Sfc implements Runnable {
 	public Queue<Vnf> VnfQueue;
 	public int cost;
 	public int ResponseTime;
+	public int runTime;
 
 	// public ReentrantLock lock;
 
-	public Sfc(Queue<Vnf> VnfQueue, ArrayList<Vnf> VnfList, int type, int cost) {
+	public Sfc(Queue<Vnf> VnfQueue, ArrayList<Vnf> VnfList, int type, int cost,
+			int runTime) {
 		this.VnfList = VnfList;
 		this.VnfQueue = VnfQueue;
 		this.initState = new sfcInitState(this);
@@ -26,6 +28,7 @@ public class Sfc implements Runnable {
 		this.State = this.initState;
 		this.type = type;
 		this.cost = cost;
+		this.runTime = runTime;
 		// this.lock = new ReentrantLock();
 	}
 
