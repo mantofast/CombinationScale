@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Queue;
 
 public class Sfc implements Runnable {
+	public int id;
 	public int type;
 	public sfcState initState;
 	public sfcState runState;
@@ -15,11 +16,16 @@ public class Sfc implements Runnable {
 	public int cost;
 	public int ResponseTime;
 	public int runTime;
+	public int packetNum;
+	public int packetLen;
 
 	// public ReentrantLock lock;
 
-	public Sfc(Queue<Vnf> VnfQueue, ArrayList<Vnf> VnfList, int type, int cost,
-			int runTime) {
+	public Sfc(int id, int packetNum, int packetLen, Queue<Vnf> VnfQueue,
+			ArrayList<Vnf> VnfList, int type, int cost, int runTime) {
+		this.id = id;
+		this.packetNum = packetNum;
+		this.packetLen = packetLen;
 		this.VnfList = VnfList;
 		this.VnfQueue = VnfQueue;
 		this.initState = new sfcInitState(this);
@@ -32,8 +38,34 @@ public class Sfc implements Runnable {
 		// this.lock = new ReentrantLock();
 	}
 
-	@Override
 	public void run() {
+		while (!this.VnfQueue.isEmpty()) {
+			Vnf f = this.VnfQueue.element();
+			f.lock.lock();
+			if (!f.SfcList.contains(this)) {
+				if (!f.SfcWaitList.contains(this)) {
+					f.SfcWaitList.add(this);
+					System.out
+							.println("add sfc" + this.id + " into VNF" + f.id);
+
+				} // else
+					// System.out.println("sfc" + this.sfc.type
+					// + " is already in the VNF" + f.type);
+			}
+			f.lock.unlock();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// lock.unlock();
+		System.out.println("sfc" + this.id + " zend");
+
+	}
+
+	public void run1() {
 		// TODO Auto-generated method stub
 		// int n = 0;
 
