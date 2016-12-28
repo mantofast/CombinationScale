@@ -19,6 +19,7 @@ public class Vnf implements Runnable {
 	// public ArrayList<Sfc> SfcList;
 	// public ArrayList<Sfc> SfcWaitList;
 	public CopyOnWriteArrayList<Sfc> SfcList;
+	public CopyOnWriteArrayList<Sfc> SfcReadyList;
 	public CopyOnWriteArrayList<Sfc> SfcWaitList;
 	// public int num;
 	public int totalCpu;
@@ -45,6 +46,7 @@ public class Vnf implements Runnable {
 		// this.SfcList = new ArrayList<Sfc>();
 		// this.SfcWaitList = new ArrayList<Sfc>();
 		this.SfcList = new CopyOnWriteArrayList<Sfc>();
+		this.SfcReadyList = new CopyOnWriteArrayList<Sfc>();
 		this.SfcWaitList = new CopyOnWriteArrayList<Sfc>();
 		this.lock = new ReentrantLock();
 		this.con = lock.newCondition();
@@ -86,7 +88,7 @@ public class Vnf implements Runnable {
 	}
 
 	public int computeCpuCost(Sfc s) {
-		int cost = this.type * s.type * 12 * (int) (s.packetLen / 60.0);
+		int cost = this.type * s.type * 4 * (int) (s.packetLen / 60.0);
 		return cost;
 	}
 
@@ -125,7 +127,8 @@ public class Vnf implements Runnable {
 				Thread.sleep(this.delay);
 				count++;
 			}
-			System.out.println("vnf" + type + "handle sfc" + this.id + "over");
+			// System.out.println("vnf" + type + "handle sfc" + this.id +
+			// "over");
 			return this.id;
 		}
 
@@ -157,17 +160,18 @@ public class Vnf implements Runnable {
 					if (result.isDone()) {
 						try {
 							if (result.get() == s.id) {
-
+								// System.out.println("s=id " + s.id);
 								this.cosumption -= computeCpuCost(s);
 								// s.packetNum =
+								this.SfcList.remove(s);
 								s.VnfQueue.remove();
 								s.packetLen = changePackLen(s);
 								s.packetNum = changePackNum(s);
-								this.SfcList.remove(s);
-								System.out.println("vnf" + this.type + " cost:"
+
+								System.out.println("vnf" + this.id + " cost:"
 										+ this.cosumption);
-								System.out.println("delete sfc" + s.type
-										+ "from vnf" + this.type);
+								System.out.println("delete sfc" + s.id
+										+ "from vnf" + this.id);
 							}
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
@@ -184,11 +188,13 @@ public class Vnf implements Runnable {
 			// lock.unlock();
 			// step2:遍历waitlist,看能否接入其中的一部分
 			// lock.lock();
-			for (Sfc s : this.SfcWaitList) {
-				if (s.cost <= this.totalCpu - this.cosumption) {
+			for (Sfc s : this.SfcReadyList) {
+				int cost = computeCpuCost(s);
+				if (cost <= this.totalCpu - this.cosumption) {
 					this.cosumption += computeCpuCost(s);
 					this.SfcList.add(s);
 					this.SfcWaitList.remove(s);
+					this.SfcReadyList.remove(s);
 
 					// 增加处理线程
 
@@ -198,12 +204,19 @@ public class Vnf implements Runnable {
 					this.results.add(task);
 					Thread t = new Thread(task);
 					t.start();
-					System.out.println("vnf" + this.type + ": sfc" + s.type
+					System.out.println("vnf" + this.id + ": sfc" + s.id
 							+ " access success");
 					// s.setState(s.runState);
 					// System.out.println("change state sfc:" + s.type);
 
 				}
+				// 需要量过大的链，需要普通扩容
+				else if (cost > this.totalCpu) {
+					System.out.println("sfc" + s.id + " demand too much: "
+							+ cost);
+					this.state.scaleUp(2);
+				}
+				// this.state.scaleUp((int) ((cost - this.totalCpu))); }
 
 			}
 			// lock.unlock();
@@ -231,21 +244,22 @@ public class Vnf implements Runnable {
 			// }
 			// }
 			// STEP3:判断是否需要扩容，以及扩容的逻辑：
-			if (this.cosumption >= this.totalCpu * 0.8)// H_L thredhold
+			// 需要的大于能提供的时候，进行扩容
+			if (this.cosumption >= this.totalCpu * 0.9)// H_L thredhold
 			{
 				if (flagP >= 2) {
-					System.out.println("vnf" + this.type + " normal scale up");
+					System.out.println("vnf" + this.id + " normal scale up");
 					this.state.scaleUp(10);
 					flagP = 0;
 				} else
 					flagP++;
 			} else if (this.cosumption >= this.totalCpu * 0.6) {
 				if (flagL != 0) {
-					System.out.println("vnf" + this.type + " combina scale up");
+					System.out.println("vnf" + this.id + " combina scale up");
 					this.state.scaleUp(Math.min(flagL * 2, 7));
 					flagL = 0;
 				} else
-					for (Sfc s : this.SfcList) {
+					for (Sfc s : this.SfcWaitList) {
 						int flag = 0;
 						for (Vnf f : s.VnfList) {
 							if (f.type != this.type
@@ -265,7 +279,7 @@ public class Vnf implements Runnable {
 			lock.unlock();
 			try {
 				// 每隔一段时间check状态
-				Thread.sleep(10);
+				Thread.sleep(2000);
 
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch blockrun()

@@ -39,12 +39,15 @@ public class Sfc implements Runnable {
 	}
 
 	public void run() {
+		for (Vnf f : this.VnfQueue) {
+			f.SfcWaitList.add(this);
+		}
 		while (!this.VnfQueue.isEmpty()) {
 			Vnf f = this.VnfQueue.element();
 			f.lock.lock();
 			if (!f.SfcList.contains(this)) {
-				if (!f.SfcWaitList.contains(this)) {
-					f.SfcWaitList.add(this);
+				if (!f.SfcReadyList.contains(this)) {
+					f.SfcReadyList.add(this);
 					System.out
 							.println("add sfc" + this.id + " into VNF" + f.id);
 
@@ -61,7 +64,8 @@ public class Sfc implements Runnable {
 			}
 		}
 		// lock.unlock();
-		System.out.println("sfc" + this.id + " zend");
+		System.out.println(new Date(System.currentTimeMillis()));
+		System.out.println("sfc" + this.id + " end");
 
 	}
 
@@ -83,7 +87,7 @@ public class Sfc implements Runnable {
 			}
 		}
 		System.out.println(new Date(System.currentTimeMillis()));
-		System.out.println("sfc" + this.type + " end");
+		System.out.println("sfc" + this.id + " end");
 	}
 
 	public void setState(sfcState s) {
