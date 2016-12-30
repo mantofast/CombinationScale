@@ -61,16 +61,16 @@ public class testMain {
 		Queue<Vnf> VnfQueue3 = new LinkedList<Vnf>();
 		VnfQueue3.add(vnf3);
 		VnfQueue3.add(vnf2);
-		Sfc sfc3 = new Sfc(3, 50, 60, VnfQueue3, VnfList3, 6, 24, 5000);
+		Sfc sfc3 = new Sfc(3, 40, 60, VnfQueue3, VnfList3, 6, 24, 5000);
 
 		ArrayList<Vnf> VnfList4 = new ArrayList<Vnf>();
 		VnfList4.add(vnf5);
 		VnfList4.add(vnf2);
 
 		Queue<Vnf> VnfQueue4 = new LinkedList<Vnf>();
-		VnfQueue4.add(vnf3);
+		VnfQueue4.add(vnf5);
 		VnfQueue4.add(vnf2);
-		Sfc sfc4 = new Sfc(4, 50, 60, VnfQueue4, VnfList4, 6, 24, 5000);
+		Sfc sfc4 = new Sfc(4, 40, 60, VnfQueue4, VnfList4, 6, 24, 5000);
 
 		Thread sfcT3 = new Thread(sfc3);
 		sfcT3.start();

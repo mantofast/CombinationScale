@@ -40,7 +40,9 @@ public class Sfc implements Runnable {
 
 	public void run() {
 		for (Vnf f : this.VnfQueue) {
+			f.lock.lock();
 			f.SfcWaitList.add(this);
+			f.lock.unlock();
 		}
 		while (!this.VnfQueue.isEmpty()) {
 			Vnf f = this.VnfQueue.element();

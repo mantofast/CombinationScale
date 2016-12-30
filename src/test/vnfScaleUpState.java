@@ -32,7 +32,10 @@ public class vnfScaleUpState implements vnfState {
 		if (this.lastScaUpTime != null
 				&& (new Date(System.currentTimeMillis())).getSeconds()
 						- this.lastScaUpTime.getSeconds() < 1) {
-			System.out.println("too soon after last scale up");
+			System.out.println("vnf" + this.vnf.id
+					+ " too soon after last scale up");
+			// À©ÈÝÊ§°Ü£¬Ó¦¸Ã»Ö¸´Õý³£×´Ì¬
+			this.vnf.setState(this.vnf.norState);
 			return -1;
 		}
 		this.lastScaUpTime = new Date(System.currentTimeMillis());
@@ -48,11 +51,13 @@ public class vnfScaleUpState implements vnfState {
 				;
 			this.vnf.totalCpu += amount;
 			this.vnf.setState(this.vnf.norState);
-			System.out.println("vnf" + this.vnf.type + "scale up success");
+			System.out.println("vnf" + this.vnf.id + " scale up success");
 			return 1;
 
 		} else {
 			System.out.println("can't scale up");
+			// À©ÈÝÊ§°Ü£¬Ó¦¸Ã»Ö¸´Õý³£×´Ì¬
+			this.vnf.setState(this.vnf.norState);
 			return -1;
 		}
 	}

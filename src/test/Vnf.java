@@ -76,8 +76,8 @@ public class Vnf implements Runnable {
 	}
 
 	public int changePackNum(Sfc s) {
-		double gama = ((this.type * s.type) / 3.0) * (s.packetLen / 60.0);
-
+		// double gama = ((this.type * s.type) / 3.0) * (s.packetLen / 60.0);
+		double gama = 1.0;
 		return (int) gama * s.packetNum;
 	}
 
@@ -215,6 +215,13 @@ public class Vnf implements Runnable {
 					System.out.println("sfc" + s.id + " demand too much: "
 							+ cost);
 					this.state.scaleUp(2);
+					while (this.state != this.norState)
+						try {
+							con.await();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 				}
 				// this.state.scaleUp((int) ((cost - this.totalCpu))); }
 
@@ -224,7 +231,7 @@ public class Vnf implements Runnable {
 			// step3:判断是否需要普通扩容
 
 			// if (flagP >= 2) {
-			// System.out.println("vnf" + this.type + " normal scale up");
+			// System.out.println("vnf" + this.id + " normal scale up");
 			// this.state.scaleUp(10);
 			// flagP = 0;
 			// } else if (this.cosumption >= this.totalCpu * 0.8)
@@ -250,20 +257,35 @@ public class Vnf implements Runnable {
 				if (flagP >= 2) {
 					System.out.println("vnf" + this.id + " normal scale up");
 					this.state.scaleUp(10);
+					while (this.state != this.norState)
+						try {
+							con.await();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					flagP = 0;
 				} else
 					flagP++;
-			} else if (this.cosumption >= this.totalCpu * 0.6) {
+			}// else if (this.cosumption >= this.totalCpu * 0.6) {
+			else if (this.cosumption >= 0) {
 				if (flagL != 0) {
 					System.out.println("vnf" + this.id + " combina scale up");
 					this.state.scaleUp(Math.min(flagL * 2, 7));
+					while (this.state != this.norState)
+						try {
+							con.await();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					flagL = 0;
 				} else
 					for (Sfc s : this.SfcWaitList) {
 						int flag = 0;
 						for (Vnf f : s.VnfList) {
-							if (f.type != this.type
-									&& f.cosumption >= f.totalCpu * 0.8)
+							if (f.id != this.id
+									&& f.cosumption >= f.totalCpu * 0.6)
 								flag = 1;
 						}
 						if (flag == 1)
